@@ -16,11 +16,18 @@ export function timeTicks(startMs: number, endMs: number, stepHours: number): nu
   return ticks;
 }
 
-/** A zero-based MW axis with round steps (2k / 5k) so ticks read cleanly. */
-export function mwAxis(maxMW: number): { domain: [number, number]; ticks: number[] } {
-  const step = maxMW > 12_000 ? 5_000 : 2_000;
-  const top = Math.max(step, Math.ceil(maxMW / step) * step);
+/** An MW axis that always includes zero and steps in round amounts (500 / 1k / 2k / 5k…). */
+export function niceAxis(min: number, max: number, maxIntervals = 5): { domain: [number, number]; ticks: number[] } {
+  const lo = Math.min(0, min);
+  const hi = Math.max(0, max);
+  const steps = [250, 500, 1_000, 2_000, 2_500, 5_000, 10_000];
+  const step =
+    steps.find((s) => Math.ceil(hi / s) - Math.floor(lo / s) <= maxIntervals) ?? steps[steps.length - 1];
+  const domain: [number, number] = [Math.floor(lo / step) * step, Math.max(step, Math.ceil(hi / step) * step)];
   const ticks: number[] = [];
-  for (let t = 0; t <= top; t += step) ticks.push(t);
-  return { domain: [0, top], ticks };
+  for (let t = domain[0]; t <= domain[1]; t += step) ticks.push(t);
+  return { domain, ticks };
 }
+
+/** Marker spec: r=4 dot with a 2px ring in the surface colour. */
+export const dot = (color: string) => ({ r: 4, fill: color, stroke: "var(--surface)", strokeWidth: 2 });

@@ -18,6 +18,7 @@
   --series-forecast-wash: rgba(42, 120, 214, 0.14);
   --series-actual: #eb6834;
   --series-vintage: #b9b7ae;
+  --series-mae: #6250d6;
   --diverge-over: #d03b3b; /* forecast above actual: wind shortfall */
   --diverge-under: #2a78d6; /* forecast below actual: wind surplus */
   --good: #006300;
@@ -48,6 +49,7 @@
     --series-forecast-wash: rgba(57, 135, 229, 0.2);
     --series-actual: #d95926;
     --series-vintage: #55544f;
+    --series-mae: #9085e9;
     --diverge-over: #e66767;
     --diverge-under: #3987e5;
     --good: #0ca30c;
@@ -435,6 +437,16 @@ h3 {
   font-size: 12px;
   fill: var(--ink-muted);
   font-variant-numeric: tabular-nums;
+}
+
+.insight {
+  font-size: 14px;
+  color: var(--ink-2);
+  margin: 10px 0 0;
+}
+
+.insight strong {
+  color: var(--ink);
 }
 
 /* ---------- Tables ---------- */

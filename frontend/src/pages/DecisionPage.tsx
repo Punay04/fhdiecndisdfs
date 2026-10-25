@@ -17,7 +17,7 @@ import { api } from "../api/client";
 import type { Decision } from "../api/types";
 import { useAppContext } from "../AppContext";
 import { Card, Kpi } from "../components/Card";
-import { AXIS_PROPS, CURSOR, GRID_PROPS, mwAxis, timeTicks } from "../components/charts/config";
+import { AXIS_PROPS, CURSOR, GRID_PROPS, niceAxis, timeTicks } from "../components/charts/config";
 import { LegendLine, LegendRect, TooltipBox, TooltipRow } from "../components/charts/parts";
 import { GateSelect } from "../components/GateSelect";
 import { ErrorState, Loading } from "../components/States";
@@ -159,7 +159,8 @@ function DecisionView({ decision, stale }: { decision: Decision; stale: boolean 
   const actualDelta =
     totals.actual_mwh !== null ? ((totals.actual_mwh - totals.forecast_mwh) / totals.forecast_mwh) * 100 : null;
 
-  const yAxis = mwAxis(
+  const yAxis = niceAxis(
+    0,
     Math.max(...decision.hours.map((h) => h.upper_mw), ...decision.actuals_half_hourly.map((a) => a.actual_mw)),
   );
 
@@ -289,7 +290,8 @@ function VintagesCard({ decision }: { decision: Decision }) {
 
   const startMs = Date.parse(decision.window.start);
   const ticks = timeTicks(startMs, Date.parse(decision.window.end) - 1, 6);
-  const yAxis = mwAxis(
+  const yAxis = niceAxis(
+    0,
     Math.max(...decision.vintages.flatMap((v) => v.points.map((p) => p.forecast_mw)), ...rows.map((r) => r.actual ?? 0)),
   );
 
