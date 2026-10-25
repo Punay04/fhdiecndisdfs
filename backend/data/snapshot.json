@@ -1,0 +1,19 @@
+{
+  "fetched_at": "2026-10-26T04:46:53+00:00",
+  "source": "Elexon BMRS Insights API (FUELHH fuelType=WIND, WINDFOR)",
+  "actuals": {
+    "settlement_dates": [
+      "2026-01-01",
+      "2026-02-01"
+    ],
+    "rows": 1536
+  },
+  "forecasts": {
+    "published": [
+      "2025-12-30T00:00:00+00:00",
+      "2026-02-01T23:59:00+00:00"
+    ],
+    "rows": 19856,
+    "publishes": 272
+  }
+}
