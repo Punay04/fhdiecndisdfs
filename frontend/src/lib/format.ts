@@ -52,3 +52,20 @@ export const ukDateTime = (iso: string) => dayTimeFmt.format(new Date(iso));
 export const shortDay = (day: string) => shortDayFmt.format(new Date(`${day}T00:00:00Z`));
 /** Calendar day "2026-01-16" -> "Friday 16 January 2026". */
 export const longDay = (day: string) => longDayFmt.format(new Date(`${day}T00:00:00Z`));
+
+/** UTC instant of 00:00 UK time on a calendar day, correct across GMT/BST. */
+export function ukMidnightIso(day: string): string {
+  const utcMidnight = new Date(`${day}T00:00:00Z`);
+  const offset = new Intl.DateTimeFormat("en-GB", { timeZone: UK_TZ, timeZoneName: "shortOffset" })
+    .formatToParts(utcMidnight)
+    .find((p) => p.type === "timeZoneName")?.value; // "GMT" or "GMT+1"
+  const hours = Number(offset?.replace("GMT", "") || 0);
+  return new Date(utcMidnight.getTime() - hours * 3_600_000).toISOString();
+}
+
+/** "2026-01-16" -> "2026-01-17". */
+export function addDays(day: string, days: number): string {
+  const d = new Date(`${day}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}

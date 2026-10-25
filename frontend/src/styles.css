@@ -265,6 +265,17 @@ h3 {
   cursor: default;
 }
 
+.field input[type="range"] {
+  width: 220px;
+  accent-color: var(--accent);
+  margin: 8px 0;
+}
+
+.field output {
+  color: var(--ink);
+  font-weight: 600;
+}
+
 /* ---------- Cards, KPIs ---------- */
 
 .grid {
