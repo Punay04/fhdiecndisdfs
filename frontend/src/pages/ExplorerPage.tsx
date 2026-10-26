@@ -28,6 +28,7 @@ import {
   ukMidnightIso,
 } from "../lib/format";
 import { useApi } from "../lib/useApi";
+import { useDocumentTitle } from "../lib/useDocumentTitle";
 import { useDebounced } from "../lib/useDebounced";
 
 const HORIZON_PRESETS = [0, 4, 12, 24, 36, 48];
@@ -56,6 +57,7 @@ function ExplorerTooltip({ active, payload }: TooltipProps<number, string>) {
 }
 
 export function ExplorerPage() {
+  useDocumentTitle("Explorer");
   const { meta } = useAppContext();
   const firstDay = addDays(meta.delivery_days[0], -1);
   const lastDay = meta.delivery_days.at(-1)!;

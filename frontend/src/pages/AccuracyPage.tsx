@@ -24,6 +24,7 @@ import { GateSelect } from "../components/GateSelect";
 import { ErrorState, Loading } from "../components/States";
 import { formatGWh, formatMW, formatPct, formatSignedGW, formatSignedMW, shortDay, tickMW } from "../lib/format";
 import { useApi } from "../lib/useApi";
+import { useDocumentTitle } from "../lib/useDocumentTitle";
 
 const OVER = "var(--diverge-over)";
 const UNDER = "var(--diverge-under)";
@@ -32,6 +33,7 @@ const signColor = (mw: number) => (mw >= 0 ? OVER : UNDER);
 const BAR_CURSOR = { fill: "var(--accent-wash)" };
 
 export function AccuracyPage() {
+  useDocumentTitle("Forecast accuracy");
   const { gate } = useAppContext();
   const accuracy = useApi(`accuracy:${gate}`, (signal) => api.accuracy(gate, signal));
   const horizon = useApi("horizon", api.horizon);

@@ -1,8 +1,10 @@
 import { useAppContext } from "../AppContext";
 import { Card } from "../components/Card";
 import { longDay, ukDateTime } from "../lib/format";
+import { useDocumentTitle } from "../lib/useDocumentTitle";
 
 export function MethodologyPage() {
+  useDocumentTitle("Methodology");
   const { meta } = useAppContext();
   const { quality, snapshot } = meta;
 

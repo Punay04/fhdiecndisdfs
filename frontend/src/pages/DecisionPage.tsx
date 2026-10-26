@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router";
 import {
   Area,
@@ -33,6 +33,7 @@ import {
   ukTime,
 } from "../lib/format";
 import { useApi } from "../lib/useApi";
+import { useDocumentTitle } from "../lib/useDocumentTitle";
 
 interface ChartRow {
   t: number;
@@ -86,12 +87,25 @@ function ForecastTooltip({ active, payload }: TooltipProps<number, string>) {
 }
 
 export function DecisionPage() {
+  useDocumentTitle("Day-ahead decision");
   const { meta, gate } = useAppContext();
   const [params, setParams] = useSearchParams();
   const days = meta.delivery_days;
   const day = days.includes(params.get("day") ?? "") ? params.get("day")! : days[0];
   const dayIndex = days.indexOf(day);
   const setDay = (value: string) => setParams({ day: value }, { replace: true });
+
+  // ← / → step through delivery days, unless the user is typing in a form control.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (["INPUT", "SELECT", "TEXTAREA"].includes(target.tagName) || e.metaKey || e.ctrlKey || e.altKey) return;
+      const next = e.key === "ArrowLeft" ? dayIndex - 1 : e.key === "ArrowRight" ? dayIndex + 1 : -1;
+      if (next >= 0 && next < days.length) setParams({ day: days[next] }, { replace: true });
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [dayIndex, days, setParams]);
 
   const { data, error, loading } = useApi(`decision:${day}:${gate}`, (signal) => api.decision(day, gate, signal));
 
@@ -161,6 +175,7 @@ function DecisionView({ decision, stale }: { decision: Decision; stale: boolean 
   const ticks = timeTicks(startMs, endMs - 1, 3);
   const actualDelta =
     totals.actual_mwh !== null ? ((totals.actual_mwh - totals.forecast_mwh) / totals.forecast_mwh) * 100 : null;
+  const belowFirm = totals.actual_mwh !== null && totals.actual_mwh < totals.firm_mwh;
 
   const yAxis = niceAxis(
     0,
@@ -204,9 +219,15 @@ function DecisionView({ decision, stale }: { decision: Decision; stale: boolean 
           label="Actual outturn (backtest)"
           value={formatGWh(totals.actual_mwh)}
           hint={
-            actualDelta !== null
-              ? `${actualDelta >= 0 ? "+" : "−"}${formatPct(Math.abs(actualDelta))} vs forecast · MAE ${formatMW(accuracy.mae_mw)}`
-              : "Not yet settled"
+            actualDelta === null ? (
+              "Not yet settled"
+            ) : (
+              <>
+                {actualDelta >= 0 ? "+" : "−"}
+                {formatPct(Math.abs(actualDelta))} vs forecast · MAE {formatMW(accuracy.mae_mw)}
+                {belowFirm && <span className="kpi__hint--alert"> · below firm level</span>}
+              </>
+            )
           }
         />
       </div>

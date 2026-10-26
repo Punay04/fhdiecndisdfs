@@ -189,6 +189,11 @@ h3 {
 
 /* ---------- Filters ---------- */
 
+.filters > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -220,6 +225,8 @@ h3 {
 
 .segmented {
   display: inline-flex;
+  flex-wrap: wrap;
+  max-width: 100%;
   background: var(--surface-raised);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -342,6 +349,11 @@ h3 {
   font-size: 12.5px;
   color: var(--ink-muted);
   margin-top: 2px;
+}
+
+.kpi__hint--alert {
+  color: var(--diverge-over);
+  font-weight: 500;
 }
 
 .kpi--hero {
@@ -569,7 +581,21 @@ details summary {
     height: 280px;
   }
 
+  .grid--kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .grid--kpis .kpi {
+    padding: 14px;
+  }
+
   .kpi__value {
-    font-size: 24px;
+    font-size: 21px;
+  }
+
+  .segmented button {
+    padding: 6px 10px;
+    font-size: 13px;
   }
 }
