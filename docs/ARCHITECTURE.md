@@ -71,7 +71,7 @@ cross-page state is the gate, kept in context. The delivery day lives in the URL
 
 ## Testing and quality
 
-- `backend/tests` has 46 pytest tests:
+- `backend/tests` has 47 pytest tests:
   - market calendar, including clock-change days
   - client retry and de-duplication, using `httpx.MockTransport` (no network)
   - store cleaning, selection rules and metrics
