@@ -8,7 +8,7 @@ immutable for the lifetime of the process, so caching by gate id is safe.
 from __future__ import annotations
 
 import math
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from functools import lru_cache
 from typing import Any
 
@@ -49,6 +49,10 @@ def _clean(value: Any) -> Any:
     if isinstance(value, float):
         return None if math.isnan(value) else round(value, 2)
     return value
+
+
+def _as_utc(ts: datetime) -> datetime:
+    return ts.replace(tzinfo=UTC) if ts.tzinfo is None else ts
 
 
 def records(df: pd.DataFrame) -> list[dict[str, Any]]:
@@ -163,6 +167,8 @@ def get_accuracy(
     last_day = last_day or days[-1]
     if first_day > last_day:
         raise ValueError("'from' must not be after 'to'")
+    if first_day < days[0] or last_day > days[-1]:
+        raise ValueError(f"Range must lie within the pilot delivery days {days[0]} to {days[-1]}")
 
     def in_range(df: pd.DataFrame) -> pd.DataFrame:
         return df[(df["delivery_day"] >= first_day) & (df["delivery_day"] <= last_day)]
@@ -211,8 +217,9 @@ def get_series(
     horizon_h: float, start: datetime | None = None, end: datetime | None = None
 ) -> schemas.Series:
     pilot_start, pilot_end = pilot_window()
-    start = start or pilot_start
-    end = end or pilot_end
+    # Timestamps without an offset are taken as UTC.
+    start = _as_utc(start) if start else pilot_start
+    end = _as_utc(end) if end else pilot_end
     if start >= end:
         raise ValueError("'start' must be before 'end'")
     dataset: Dataset = get_dataset()

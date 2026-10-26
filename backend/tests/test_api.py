@@ -64,6 +64,8 @@ def test_accuracy_sub_range_and_validation(client: TestClient) -> None:
     assert body["summary"]["hours"] == 3 * 24
     bad = client.get("/api/accuracy", params={"from": "2026-01-12", "to": "2026-01-10"})
     assert bad.status_code == 422
+    outside = client.get("/api/accuracy", params={"from": "2026-03-01", "to": "2026-03-05"})
+    assert outside.status_code == 422
 
 
 def test_horizon_curve_error_grows_with_lead_time(client: TestClient) -> None:
@@ -80,3 +82,12 @@ def test_series_respects_window_and_horizon(client: TestClient) -> None:
     assert len(body["points"]) == 24
     assert all(p["horizon_h"] >= 24 for p in body["points"])
     assert client.get("/api/series", params={"horizon_h": 72}).status_code == 422
+
+
+def test_series_treats_naive_timestamps_as_utc(client: TestClient) -> None:
+    naive = client.get(
+        "/api/series", params={"start": "2026-01-10T00:00:00", "end": "2026-01-11T00:00:00"}
+    )
+    assert naive.status_code == 200
+    assert naive.json()["window"]["start"] == "2026-01-10T00:00:00Z"
+    assert len(naive.json()["points"]) == 24
