@@ -6,7 +6,7 @@ it shows:
 - the range that forecast has historically landed in
 - how accurate it has been across **every purchase decision made in January 2026**
 
-**Live app:** _deployment link added after the first Cloud Run deploy_
+**Live app:** https://wind-forecast-monitor-195551097917.europe-west2.run.app/ (Google Cloud Run, London region)
 
 ![Day-ahead decision view](docs/images/decision.png)
 
