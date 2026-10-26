@@ -73,7 +73,10 @@ function ForecastTooltip({ active, payload }: TooltipProps<number, string>) {
         <TooltipRow color="var(--series-forecast)" label="Forecast" value={formatMW(row.forecast)} />
       )}
       {row.band && (
-        <TooltipRow label="P10 – P90" value={`${tickMW(Math.round(row.band[0]))} – ${tickMW(Math.round(row.band[1]))}`} />
+        <TooltipRow
+          label="P10 – P90"
+          value={`${tickMW(Math.round(row.band[0]))} – ${tickMW(Math.round(row.band[1]))}`}
+        />
       )}
       {row.actual !== undefined && (
         <TooltipRow color="var(--series-actual)" label="Actual" value={formatMW(row.actual)} />
@@ -187,7 +190,11 @@ function DecisionView({ decision, stale }: { decision: Decision; stale: boolean 
           value={formatGWh(totals.firm_mwh)}
           hint={`Delivered in 9 of 10 hours historically · forecast × ${band.p10.toFixed(2)}`}
         />
-        <Kpi label="Forecast wind energy" value={formatGWh(totals.forecast_mwh)} hint={`Peak ${formatMW(totals.peak_forecast_mw)} · low ${formatMW(totals.trough_forecast_mw)}`} />
+        <Kpi
+          label="Forecast wind energy"
+          value={formatGWh(totals.forecast_mwh)}
+          hint={`Peak ${formatMW(totals.peak_forecast_mw)} · low ${formatMW(totals.trough_forecast_mw)}`}
+        />
         <Kpi
           label="Expected outturn (P50)"
           value={formatGWh(totals.expected_mwh)}
@@ -292,7 +299,10 @@ function VintagesCard({ decision }: { decision: Decision }) {
   const ticks = timeTicks(startMs, Date.parse(decision.window.end) - 1, 6);
   const yAxis = niceAxis(
     0,
-    Math.max(...decision.vintages.flatMap((v) => v.points.map((p) => p.forecast_mw)), ...rows.map((r) => r.actual ?? 0)),
+    Math.max(
+      ...decision.vintages.flatMap((v) => v.points.map((p) => p.forecast_mw)),
+      ...rows.map((r) => r.actual ?? 0),
+    ),
   );
 
   return (
@@ -362,7 +372,13 @@ function VintagesCard({ decision }: { decision: Decision }) {
                   isAnimationActive={false}
                 />
               ))}
-            <Line dataKey="actual" stroke="var(--series-actual)" strokeWidth={2} dot={false} isAnimationActive={false} />
+            <Line
+              dataKey="actual"
+              stroke="var(--series-actual)"
+              strokeWidth={2}
+              dot={false}
+              isAnimationActive={false}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>

@@ -47,7 +47,9 @@ function ExplorerTooltip({ active, payload }: TooltipProps<number, string>) {
       {row.forecast !== undefined && (
         <TooltipRow color="var(--series-forecast)" label="Forecast" value={formatMW(row.forecast)} />
       )}
-      {row.actual !== undefined && <TooltipRow color="var(--series-actual)" label="Actual" value={formatMW(row.actual)} />}
+      {row.actual !== undefined && (
+        <TooltipRow color="var(--series-actual)" label="Actual" value={formatMW(row.actual)} />
+      )}
       {row.publish && <TooltipRow label="Published" value={ukDateTime(row.publish)} />}
     </TooltipBox>
   );
@@ -66,7 +68,9 @@ export function ExplorerPage() {
   const start = ukMidnightIso(from);
   const end = ukMidnightIso(addDays(to, 1));
   const series = useApi(`series:${start}:${end}:${debouncedHorizon}`, (signal) =>
-    valid ? api.series(debouncedHorizon, start, end, signal) : Promise.reject(new Error("Pick a start date before the end date")),
+    valid
+      ? api.series(debouncedHorizon, start, end, signal)
+      : Promise.reject(new Error("Pick a start date before the end date")),
   );
 
   return (
@@ -84,7 +88,14 @@ export function ExplorerPage() {
       <div className="filters">
         <div className="field">
           <label htmlFor="from">From (UK)</label>
-          <input id="from" type="date" min={firstDay} max={lastDay} value={from} onChange={(e) => setFrom(e.target.value)} />
+          <input
+            id="from"
+            type="date"
+            min={firstDay}
+            max={lastDay}
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+          />
         </div>
         <div className="field">
           <label htmlFor="to">To (UK, inclusive)</label>
@@ -131,7 +142,8 @@ function SeriesView({ series, stale }: { series: Series; stale: boolean }) {
       if (!byTime.has(t)) byTime.set(t, { t });
       return byTime.get(t)!;
     };
-    for (const p of series.points) Object.assign(row(p.start_time), { forecast: p.forecast_mw, publish: p.publish_time });
+    for (const p of series.points)
+      Object.assign(row(p.start_time), { forecast: p.forecast_mw, publish: p.publish_time });
     for (const a of series.actuals_half_hourly) row(a.start_time).actual = a.actual_mw;
     return [...byTime.values()].sort((a, b) => a.t - b.t);
   }, [series]);
@@ -150,10 +162,19 @@ function SeriesView({ series, stale }: { series: Series; stale: boolean }) {
   return (
     <div className={`stack ${stale ? "is-stale" : ""}`}>
       <div className="grid grid--kpis">
-        <Kpi hero label="Mean absolute error" value={formatMW(summary.mae_mw)} hint={`${formatPct(summary.nmae_pct)} of mean actual`} />
+        <Kpi
+          hero
+          label="Mean absolute error"
+          value={formatMW(summary.mae_mw)}
+          hint={`${formatPct(summary.nmae_pct)} of mean actual`}
+        />
         <Kpi label="Bias" value={formatSignedMW(summary.bias_mw)} hint="Positive = forecast too high" />
         <Kpi label="RMSE" value={formatMW(summary.rmse_mw)} />
-        <Kpi label="Hours compared" value={summary.hours.toLocaleString("en-GB")} hint="Hourly forecast vs mean of two half-hours" />
+        <Kpi
+          label="Hours compared"
+          value={summary.hours.toLocaleString("en-GB")}
+          hint="Hourly forecast vs mean of two half-hours"
+        />
       </div>
       <Card title={`Actual vs forecast made ≥ ${series.horizon_h} h ahead`} subtitle="National wind, MW · UK time">
         <div className="chart">
@@ -171,8 +192,22 @@ function SeriesView({ series, stale }: { series: Series; stale: boolean }) {
               />
               <YAxis {...AXIS_PROPS} width={44} tickFormatter={tickMW} domain={y.domain} ticks={y.ticks} />
               <Tooltip content={<ExplorerTooltip />} cursor={CURSOR} />
-              <Line dataKey="forecast" stroke="var(--series-forecast)" strokeWidth={2} dot={false} connectNulls isAnimationActive={false} />
-              <Line dataKey="actual" stroke="var(--series-actual)" strokeWidth={2} dot={false} connectNulls isAnimationActive={false} />
+              <Line
+                dataKey="forecast"
+                stroke="var(--series-forecast)"
+                strokeWidth={2}
+                dot={false}
+                connectNulls
+                isAnimationActive={false}
+              />
+              <Line
+                dataKey="actual"
+                stroke="var(--series-actual)"
+                strokeWidth={2}
+                dot={false}
+                connectNulls
+                isAnimationActive={false}
+              />
             </ComposedChart>
           </ResponsiveContainer>
         </div>

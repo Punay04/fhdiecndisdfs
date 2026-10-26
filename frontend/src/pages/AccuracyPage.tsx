@@ -43,8 +43,8 @@ export function AccuracyPage() {
           <h1>Forecast accuracy</h1>
           <p>
             How far the forecast available at gate closure landed from actual wind generation, across every delivery
-            hour of the January 2026 pilot. Error = forecast − actual, so positive means wind was over-forecast and
-            the desk would have been short.
+            hour of the January 2026 pilot. Error = forecast − actual, so positive means wind was over-forecast and the
+            desk would have been short.
           </p>
         </div>
       </div>
@@ -53,9 +53,7 @@ export function AccuracyPage() {
       </div>
       {accuracy.error && <ErrorState error={accuracy.error} />}
       {!accuracy.data && !accuracy.error && <Loading />}
-      {accuracy.data && (
-        <AccuracyView accuracy={accuracy.data} horizon={horizon.data} stale={accuracy.loading} />
-      )}
+      {accuracy.data && <AccuracyView accuracy={accuracy.data} horizon={horizon.data} stale={accuracy.loading} />}
     </>
   );
 }
@@ -72,9 +70,9 @@ function AccuracyView({ accuracy, horizon, stale }: { accuracy: Accuracy; horizo
     <div className={`stack ${stale ? "is-stale" : ""}`}>
       <div className="callout">
         Across {summary.hours} hours the forecast <strong>over-stated wind by {formatMW(summary.bias_mw)}</strong> on
-        average, and was too high in {formatPct((100 * overHours) / summary.hours, 0)} of hours. The error is mostly
-        a steady bias rather than noise: correcting each day by the previous week’s settled bias cuts the typical
-        error by <strong>{formatPct(improvement, 0)}</strong>.
+        average, and was too high in {formatPct((100 * overHours) / summary.hours, 0)} of hours. The error is mostly a
+        steady bias rather than noise: correcting each day by the previous week’s settled bias cuts the typical error by{" "}
+        <strong>{formatPct(improvement, 0)}</strong>.
       </div>
 
       <div className="grid grid--kpis">
@@ -130,7 +128,13 @@ function DailyBiasCard({ accuracy }: { accuracy: Accuracy }) {
         <ResponsiveContainer>
           <BarChart data={rows} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
             <CartesianGrid {...GRID_PROPS} />
-            <XAxis {...AXIS_PROPS} dataKey="delivery_day" tickFormatter={shortDay} interval="preserveStartEnd" minTickGap={24} />
+            <XAxis
+              {...AXIS_PROPS}
+              dataKey="delivery_day"
+              tickFormatter={shortDay}
+              interval="preserveStartEnd"
+              minTickGap={24}
+            />
             <YAxis {...AXIS_PROPS} width={44} tickFormatter={tickMW} domain={y.domain} ticks={y.ticks} />
             <ReferenceLine y={0} stroke="var(--axis)" />
             <Tooltip
@@ -259,8 +263,8 @@ function HorizonCard({ horizon }: { horizon?: HorizonRow[] }) {
             <LegendRect color="var(--accent-wash)">Lead times seen at day-ahead gate closure</LegendRect>
           </div>
           <p className="insight">
-            Even a forecast made <strong>0 h ahead</strong> is off by {formatMW(horizon[0]?.mae_mw)}: most of the
-            error is structural bias, not weather uncertainty.
+            Even a forecast made <strong>0 h ahead</strong> is off by {formatMW(horizon[0]?.mae_mw)}: most of the error
+            is structural bias, not weather uncertainty.
           </p>
         </>
       )}
@@ -346,7 +350,10 @@ function GateComparisonCard({ accuracy }: { accuracy: Accuracy }) {
   const [first, second] = accuracy.gate_comparison;
   const gain = first && second ? (first.summary.mae_mw ?? 0) - (second.summary.mae_mw ?? 0) : null;
   return (
-    <Card title="Does a later gate buy a better forecast?" subtitle="Same delivery hours, forecast available at each gate">
+    <Card
+      title="Does a later gate buy a better forecast?"
+      subtitle="Same delivery hours, forecast available at each gate"
+    >
       <div className="table-wrap">
         <table>
           <thead>

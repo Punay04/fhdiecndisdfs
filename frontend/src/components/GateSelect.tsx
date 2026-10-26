@@ -8,7 +8,13 @@ export function GateSelect() {
       <span id="gate-label">Auction gate closure (day before delivery)</span>
       <div className="segmented" role="group" aria-labelledby="gate-label">
         {meta.gates.map((g) => (
-          <button key={g.id} type="button" aria-pressed={gate === g.id} title={g.description} onClick={() => setGate(g.id)}>
+          <button
+            key={g.id}
+            type="button"
+            aria-pressed={gate === g.id}
+            title={g.description}
+            onClick={() => setGate(g.id)}
+          >
             {g.label}
           </button>
         ))}

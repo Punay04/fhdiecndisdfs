@@ -21,8 +21,7 @@ export function niceAxis(min: number, max: number, maxIntervals = 5): { domain: 
   const lo = Math.min(0, min);
   const hi = Math.max(0, max);
   const steps = [250, 500, 1_000, 2_000, 2_500, 5_000, 10_000];
-  const step =
-    steps.find((s) => Math.ceil(hi / s) - Math.floor(lo / s) <= maxIntervals) ?? steps[steps.length - 1];
+  const step = steps.find((s) => Math.ceil(hi / s) - Math.floor(lo / s) <= maxIntervals) ?? steps[steps.length - 1];
   const domain: [number, number] = [Math.floor(lo / step) * step, Math.max(step, Math.ceil(hi / step) * step)];
   const ticks: number[] = [];
   for (let t = domain[0]; t <= domain[1]; t += step) ticks.push(t);
